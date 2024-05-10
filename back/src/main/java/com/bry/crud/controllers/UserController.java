@@ -2,21 +2,37 @@ package com.bry.crud.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bry.crud.domain.user.RequestUser;
+import com.bry.crud.domain.user.User;
+import com.bry.crud.domain.user.UserRepository;
+
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
-/*   // Endpoint para buscar um usuário pelo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    } */
+  @Autowired
+  private UserRepository repository;
+
+  @GetMapping
+  public ResponseEntity getAllUsers() {
+    var allUsers = repository.findAll();
+    return ResponseEntity.ok(allUsers);
   }
+
+   @PostMapping
+    public ResponseEntity createUser(@RequestBody @Valid RequestUser data) {
+      User newUser = new User(data);
+      System.out.println(newUser);
+      repository.save(newUser);
+      return ResponseEntity.ok().build();
+    }
+
+}
