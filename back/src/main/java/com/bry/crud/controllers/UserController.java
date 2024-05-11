@@ -1,7 +1,11 @@
 package com.bry.crud.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bry.crud.domain.user.RequestUser;
@@ -26,12 +31,22 @@ public class UserController {
   @Autowired
   private UserRepository repository;
 
-  // GET /users
-  @GetMapping("/users")
-  public ResponseEntity getAllUsers() {
-    var allUsers = repository.findAll();
-    allUsers.forEach(user -> user.setCpf(user.obfuscateCpf()));
-    return ResponseEntity.ok(allUsers);
+  // GET /users/:page
+  @GetMapping("users/{page}")
+  public ResponseEntity getAllUsers(
+        @PathVariable int page,
+        @RequestParam(defaultValue = "1") int size) {
+  
+      Pageable pageable = PageRequest.of(page, size);
+      Page<User> usersPage = repository.findAll(pageable);
+  
+      if (usersPage.isEmpty()) {
+          return ResponseEntity.noContent().build();
+      } else {
+          List<User> users = usersPage.getContent();
+          users.forEach(user -> user.setCpf(user.obfuscateCpf()));
+          return ResponseEntity.ok(users);
+      }
   }
 
   // GET /user/:id
