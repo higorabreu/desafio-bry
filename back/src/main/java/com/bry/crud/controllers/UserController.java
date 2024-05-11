@@ -34,6 +34,17 @@ public class UserController {
     return ResponseEntity.ok(allUsers);
   }
 
+  // GET /user/:id
+  @GetMapping("/user/{id}")
+  public ResponseEntity getUserById(@PathVariable("id") String id) {
+    Optional<User> userOptional = repository.findById(id);
+    if (userOptional.isPresent()) {
+        return ResponseEntity.ok(userOptional.get());
+    } else {
+        return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+    }
+  }
+
   // POST /user
   @PostMapping("/user")
   public ResponseEntity createUser(@RequestBody @Valid RequestUser data) {
@@ -43,10 +54,11 @@ public class UserController {
     User existingUser = repository.findByCpf(data.cpf());
     if (existingUser != null) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF already exists");
+    } else {
+      User newUser = new User(data);
+      repository.save(newUser);
+      return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
     }
-    User newUser = new User(data);
-    repository.save(newUser);
-    return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
   }
 
   // PUT /user
@@ -55,11 +67,11 @@ public class UserController {
     User existingUser = repository.findByCpf(data.cpf());
     if (existingUser == null) {
         return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+    } else {
+      existingUser.setName(data.name());
+      repository.save(existingUser);
+      return ResponseEntity.ok(existingUser);
     }
-    existingUser.setName(data.name());
-    repository.save(existingUser);
-
-    return ResponseEntity.ok(existingUser);
   }
 
   // DELETE /user/:id
