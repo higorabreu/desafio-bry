@@ -1,8 +1,13 @@
 package com.bry.crud.controllers;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +35,10 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity createUser(@RequestBody @Valid RequestUser data) {
+    User existingUser = repository.findByCpf(data.cpf());
+    if (existingUser != null) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF already exists");
+    }
     User newUser = new User(data);
     repository.save(newUser);
     return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
@@ -42,7 +51,20 @@ public class UserController {
         return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
     }
     existingUser.setName(data.name());
+    repository.save(existingUser);
+
     return ResponseEntity.ok(existingUser);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity deleteUser(@PathVariable("id") String id) {
+    Optional<User> userOptional = repository.findById(id);
+      if (userOptional.isPresent()) {
+        repository.deleteById(id);
+        return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
+    } else {
+        return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+    }
   }
 
 }
