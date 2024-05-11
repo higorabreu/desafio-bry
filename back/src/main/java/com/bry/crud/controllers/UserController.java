@@ -22,19 +22,20 @@ import com.bry.crud.util.CPFValidator;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
   @Autowired
   private UserRepository repository;
 
-  @GetMapping
+  // GET /users
+  @GetMapping("/users")
   public ResponseEntity getAllUsers() {
     var allUsers = repository.findAll();
     return ResponseEntity.ok(allUsers);
   }
 
-  @PostMapping
+  // POST /user
+  @PostMapping("/user")
   public ResponseEntity createUser(@RequestBody @Valid RequestUser data) {
     if (!CPFValidator.isValid(data.cpf())) {
       return ResponseEntity.badRequest().body("CPF is not valid");
@@ -48,7 +49,8 @@ public class UserController {
     return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
   }
 
-  @PutMapping
+  // PUT /user
+  @PutMapping("/user")
   public ResponseEntity updateUser(@RequestBody @Valid RequestUser data) {
     User existingUser = repository.findByCpf(data.cpf());
     if (existingUser == null) {
@@ -60,7 +62,8 @@ public class UserController {
     return ResponseEntity.ok(existingUser);
   }
 
-  @DeleteMapping("/{id}")
+  // DELETE /user/:id
+  @DeleteMapping("/user/{id}")
   public ResponseEntity deleteUser(@PathVariable("id") String id) {
     Optional<User> userOptional = repository.findById(id);
       if (userOptional.isPresent()) {
