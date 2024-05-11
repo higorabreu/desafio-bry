@@ -22,4 +22,16 @@ public class User {
     this.name = requestUser.name();
     this.cpf = requestUser.cpf();
   }
+
+  public String obfuscateCpf() {
+    String cpf = this.cpf;
+    int length = cpf.length();
+    StringBuilder obfuscatedCpf = new StringBuilder();
+
+    for (int i = 0; i < length - 4; i++) {
+        obfuscatedCpf.append('*');
+    }
+    obfuscatedCpf.append(cpf.substring(length - 4));
+    return obfuscatedCpf.toString();
+  }
 }

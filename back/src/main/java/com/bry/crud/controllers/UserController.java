@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bry.crud.domain.user.RequestUser;
@@ -31,6 +30,7 @@ public class UserController {
   @GetMapping("/users")
   public ResponseEntity getAllUsers() {
     var allUsers = repository.findAll();
+    allUsers.forEach(user -> user.setCpf(user.obfuscateCpf()));
     return ResponseEntity.ok(allUsers);
   }
 
@@ -39,7 +39,9 @@ public class UserController {
   public ResponseEntity getUserById(@PathVariable("id") String id) {
     Optional<User> userOptional = repository.findById(id);
     if (userOptional.isPresent()) {
-        return ResponseEntity.ok(userOptional.get());
+      User user = userOptional.get();
+      user.setCpf(user.obfuscateCpf());
+      return ResponseEntity.ok(user);
     } else {
         return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
     }
