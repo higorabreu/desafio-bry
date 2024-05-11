@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bry.crud.domain.user.RequestUser;
 import com.bry.crud.domain.user.User;
 import com.bry.crud.domain.user.UserRepository;
+import com.bry.crud.util.CPFValidator;
 
 import jakarta.validation.Valid;
 
@@ -35,6 +36,9 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity createUser(@RequestBody @Valid RequestUser data) {
+    if (!CPFValidator.isValid(data.cpf())) {
+      return ResponseEntity.badRequest().body("CPF is not valid");
+    }
     User existingUser = repository.findByCpf(data.cpf());
     if (existingUser != null) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF already exists");
