@@ -1,5 +1,12 @@
 package com.bry.crud.domain.user;
 
-public record RequestUser(String name, String cpf) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record RequestUser(
+  @NotBlank
+  String name, 
+  @NotNull
+  String cpf) {
 
 }
