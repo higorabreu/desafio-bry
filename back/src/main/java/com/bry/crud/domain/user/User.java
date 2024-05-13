@@ -1,5 +1,7 @@
 package com.bry.crud.domain.user;
 
+import com.bry.crud.controllers.dto.RequestUser;
+
 import jakarta.persistence.*;
 import lombok.*;
 

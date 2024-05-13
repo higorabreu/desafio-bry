@@ -1,5 +1,6 @@
 CREATE TABLE users (
     id TEXT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    cpf VARCHAR(14) UNIQUE NOT NULL
+    cpf VARCHAR(14) UNIQUE NOT NULL,
+    picture BYTEA NOT NULL
 );
