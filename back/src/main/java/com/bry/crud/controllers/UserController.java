@@ -1,5 +1,6 @@
 package com.bry.crud.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bry.crud.controllers.dto.RequestCreateUser;
 import com.bry.crud.controllers.dto.RequestUpdateUser;
-import com.bry.crud.controllers.dto.RequestUser;
+import com.bry.crud.controllers.dto.ResponseUser;
 import com.bry.crud.domain.user.User;
 import com.bry.crud.service.UserService;
 import com.bry.crud.service.exceptions.UserAlreadyExistsException;
@@ -27,6 +28,7 @@ import com.bry.crud.service.exceptions.UserFetchException;
 import com.bry.crud.service.exceptions.UserNotFoundException;
 import com.bry.crud.service.exceptions.UserUpdateFailureException;
 import com.bry.crud.util.CPFValidator;
+import com.bry.crud.util.PictureConverter;
 
 import jakarta.validation.Valid;
 
@@ -38,7 +40,7 @@ public class UserController {
 
   // GET /users/:page
   @GetMapping("users/{page}")
-  public ResponseEntity<List<User>> getAllUsers(
+  public ResponseEntity<List<ResponseUser>> getAllUsers(
         @PathVariable int page,
         @RequestParam(defaultValue = "2") int size) {
       try {
@@ -46,21 +48,28 @@ public class UserController {
         if (users.isEmpty()) {
           return ResponseEntity.noContent().build();
         } else {
-          return ResponseEntity.ok(users);
+          List<ResponseUser> responseUsers = new ArrayList<>();
+          for (User user : users) {
+            String picture = PictureConverter.byteArrayToBase64(user.getPicture());
+            ResponseUser responseUser = new ResponseUser(user.getId(), user.getName(), user.obfuscateCpf(), picture);
+            responseUsers.add(responseUser);
+          }
+          return ResponseEntity.ok(responseUsers);
         }
       } catch (UserFetchException ex){ 
           return ResponseEntity.internalServerError().body(null);
       }
   }
- // todo: criar um dto de resposta ResponseUser para devolver no lugar de User
+  
   // GET /user/:id
   @GetMapping("/user/{id}")
-  public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
+  public ResponseEntity<ResponseUser> getUserById(@PathVariable("id") String id) {
     Optional<User> userOptional = userService.getUserById(id);
     if (userOptional.isPresent()) {
       User user = userOptional.get();
-      user.setCpf(user.obfuscateCpf());
-      return ResponseEntity.ok(user);
+      String picture = PictureConverter.byteArrayToBase64(user.getPicture());
+      ResponseUser responseUser = new ResponseUser(user.getId(), user.getName(), user.obfuscateCpf(), picture);
+      return ResponseEntity.ok(responseUser);
     } else {
         return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
     }

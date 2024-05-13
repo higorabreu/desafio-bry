@@ -9,6 +9,8 @@ public record RequestUpdateUser(
   @NotBlank
   String name, 
   @NotNull
-  String cpf) {
-
-}
+  String cpf,
+  @NotNull
+  String picture
+  )
+  {}

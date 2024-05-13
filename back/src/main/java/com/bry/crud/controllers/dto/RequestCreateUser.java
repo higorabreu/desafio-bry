@@ -7,6 +7,8 @@ public record RequestCreateUser(
   @NotBlank
   String name, 
   @NotNull
-  String cpf) {
-
-}
+  String cpf,
+  @NotNull
+  String picture
+  )
+  {}

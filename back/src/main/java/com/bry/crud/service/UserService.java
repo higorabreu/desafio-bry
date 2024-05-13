@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 
 import com.bry.crud.controllers.dto.RequestCreateUser;
-import com.bry.crud.controllers.dto.RequestUser;
 import com.bry.crud.domain.user.User;
 import com.bry.crud.domain.user.UserRepository;
 import com.bry.crud.service.exceptions.UserAlreadyExistsException;
