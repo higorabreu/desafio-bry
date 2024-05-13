@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bry.crud.controllers.dto.RequestCreateUser;
+import com.bry.crud.controllers.dto.RequestUpdateUser;
 import com.bry.crud.controllers.dto.RequestUser;
 import com.bry.crud.domain.user.User;
 import com.bry.crud.service.UserService;
@@ -50,7 +52,7 @@ public class UserController {
           return ResponseEntity.internalServerError().body(null);
       }
   }
-
+ // todo: criar um dto de resposta ResponseUser para devolver no lugar de User
   // GET /user/:id
   @GetMapping("/user/{id}")
   public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
@@ -66,7 +68,7 @@ public class UserController {
 
   // POST /user
   @PostMapping("/user")
-  public ResponseEntity<String> createUser(@RequestBody @Valid RequestUser data) {
+  public ResponseEntity<String> createUser(@RequestBody @Valid RequestCreateUser data) {
     if (!CPFValidator.isValid(data.cpf())) {
       return ResponseEntity.badRequest().body("CPF is not valid");
     }
@@ -82,7 +84,7 @@ public class UserController {
 
   // PUT /user
   @PutMapping("/user")
-  public ResponseEntity<String> updateUser(@RequestBody @Valid RequestUser data) {
+  public ResponseEntity<String> updateUser(@RequestBody @Valid RequestUpdateUser data) {
     try {
       userService.updateUser(new User(data));
     } catch (UserNotFoundException ex) {

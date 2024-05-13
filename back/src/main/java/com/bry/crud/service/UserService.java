@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 
+import com.bry.crud.controllers.dto.RequestCreateUser;
 import com.bry.crud.controllers.dto.RequestUser;
 import com.bry.crud.domain.user.User;
 import com.bry.crud.domain.user.UserRepository;
@@ -52,10 +53,9 @@ public class UserService {
         logger.error("Failed to fetch users", e);
         throw new UserFetchException();
     }
-    
   }
 
-  public void createUser(RequestUser data) throws UserCreationFailureException, UserAlreadyExistsException {
+  public void createUser(RequestCreateUser data) throws UserCreationFailureException, UserAlreadyExistsException {
     Optional<User> userOptional = repository.findByCpf(data.cpf());
     if (userOptional.isPresent()) {
       logger.warn("Cpf already exists");
@@ -68,14 +68,15 @@ public class UserService {
         logger.error("Failed to create user", e);
         throw new UserCreationFailureException();
     }
-  
   }
 
   public void updateUser(User user) throws UserUpdateFailureException, UserNotFoundException {
     Optional<User> existingUserOptional = repository.findById(user.getId());
     if (existingUserOptional.isPresent()) {
+        User existingUser = existingUserOptional.get();
       try {
-        repository.save(user);
+        existingUser.setName(user.getName());
+        repository.save(existingUser);
       } catch (Exception e) {
           logger.error("Failed to update user", e);
           throw new UserUpdateFailureException();
