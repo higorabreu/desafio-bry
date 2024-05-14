@@ -1,4 +1,4 @@
-package com.bry.crud.controllers.dto;
+package com.bry.crud.dto;
 
 public record ResponseUser(
   String id,

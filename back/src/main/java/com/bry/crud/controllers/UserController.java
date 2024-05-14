@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bry.crud.controllers.dto.RequestCreateUser;
-import com.bry.crud.controllers.dto.RequestUpdateUser;
-import com.bry.crud.controllers.dto.ResponseUser;
 import com.bry.crud.domain.user.User;
+import com.bry.crud.dto.RequestCreateUser;
+import com.bry.crud.dto.RequestUpdateUser;
+import com.bry.crud.dto.ResponseUser;
 import com.bry.crud.service.UserService;
+import com.bry.crud.service.exceptions.InvalidCpfException;
 import com.bry.crud.service.exceptions.UserAlreadyExistsException;
 import com.bry.crud.service.exceptions.UserCreationFailureException;
 import com.bry.crud.service.exceptions.UserDeleteFailureException;
 import com.bry.crud.service.exceptions.UserFetchException;
 import com.bry.crud.service.exceptions.UserNotFoundException;
 import com.bry.crud.service.exceptions.UserUpdateFailureException;
-import com.bry.crud.util.CPFValidator;
 import com.bry.crud.util.PictureConverter;
 
 import jakarta.validation.Valid;
@@ -42,7 +42,7 @@ public class UserController {
   @GetMapping("users/{page}")
   public ResponseEntity<List<ResponseUser>> getAllUsers(
         @PathVariable int page,
-        @RequestParam(defaultValue = "2") int size) {
+        @RequestParam(defaultValue = "3") int size) {
       try {
         List<User> users = userService.getAllUsers(page, size);
         if (users.isEmpty()) {
@@ -60,7 +60,7 @@ public class UserController {
           return ResponseEntity.internalServerError().body(null);
       }
   }
-  
+
   // GET /user/:id
   @GetMapping("/user/{id}")
   public ResponseEntity<ResponseUser> getUserById(@PathVariable("id") String id) {
@@ -71,37 +71,71 @@ public class UserController {
       ResponseUser responseUser = new ResponseUser(user.getId(), user.getName(), user.obfuscateCpf(), picture);
       return ResponseEntity.ok(responseUser);
     } else {
-        return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+        return ResponseEntity.notFound().build();
     }
   }
 
   // POST /user
   @PostMapping("/user")
   public ResponseEntity<String> createUser(@RequestBody @Valid RequestCreateUser data) {
-    if (!CPFValidator.isValid(data.cpf())) {
-      return ResponseEntity.badRequest().body("CPF is not valid");
-    }
     try {
       userService.createUser(data);
     } catch (UserCreationFailureException ex) {
         return ResponseEntity.internalServerError().body("Failed to create user");
     } catch (UserAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF already exists");
+    } catch (InvalidCpfException ex) {
+      return ResponseEntity.badRequest().body("CPF is not valid");
     }
-    return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
+    return ResponseEntity.ok().build();
+  }
+
+  // POST /users
+  @PostMapping("/users")
+  public ResponseEntity<String> createUsers(@RequestBody List<RequestCreateUser> data) {
+    try {
+      userService.createUsers(data);
+    } catch (UserCreationFailureException ex) {
+        return ResponseEntity.internalServerError().body("Failed to create user");
+    } catch (UserAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("CPF already exists");
+    } catch (InvalidCpfException ex) {
+      return ResponseEntity.badRequest().body("CPF is not valid");
+    }
+    return ResponseEntity.ok().build();
+  }
+
+  // POST /users/parallel
+  @PostMapping("/users/parallel")
+  public ResponseEntity<String> createUsersParallel(@RequestBody List<RequestCreateUser> data) {
+    userService.createUsersParallel(data);
+    return ResponseEntity.accepted().build();
   }
 
   // PUT /user
   @PutMapping("/user")
   public ResponseEntity<String> updateUser(@RequestBody @Valid RequestUpdateUser data) {
     try {
-      userService.updateUser(new User(data));
+      userService.updateUser(data);
     } catch (UserNotFoundException ex) {
-      return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+      return ResponseEntity.notFound().build();
     } catch (UserUpdateFailureException ex) {
       return ResponseEntity.internalServerError().body("Failed to update user");
     }
-    return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
+    return ResponseEntity.ok().build();
+  }
+
+  // PUT /users
+  @PutMapping("/users")
+  public ResponseEntity<String> updateUsers(@RequestBody List<RequestUpdateUser> data) {
+    try {
+      userService.updateUsers(data);
+    } catch (UserNotFoundException ex) {
+      return ResponseEntity.notFound().build();
+    } catch (UserUpdateFailureException ex) {
+      return ResponseEntity.internalServerError().body("Failed to update users");
+    }
+    return ResponseEntity.ok().build();
   }
 
   // DELETE /user/:id
@@ -110,10 +144,10 @@ public class UserController {
     try {
       userService.deleteUser(id);
     } catch (UserNotFoundException ex) {
-      return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+      return ResponseEntity.notFound().build();
     } catch (UserDeleteFailureException ex) {
       return ResponseEntity.internalServerError().body("Failed to delete user");
     }
-    return ResponseEntity.ok().build(); // Retorna uma resposta de sucesso
+    return ResponseEntity.ok().build();
   }
 }

@@ -4,10 +4,9 @@ package com.bry.crud.domain.user;
 import java.sql.Types;
 
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
 
-import com.bry.crud.controllers.dto.RequestCreateUser;
-import com.bry.crud.controllers.dto.RequestUpdateUser;
+import com.bry.crud.dto.RequestCreateUser;
+import com.bry.crud.dto.RequestUpdateUser;
 import com.bry.crud.util.PictureConverter;
 
 import jakarta.persistence.*;
@@ -35,15 +34,12 @@ public class User {
   public User(RequestUpdateUser requestUser) {
     this.id = requestUser.id();
     this.name = requestUser.name();
-    this.cpf = requestUser.cpf();
     this.picture = PictureConverter.base64ToByteArray(requestUser.picture());
-    //this.picture = requestUser.picture().getBytes();
   }
   public User(RequestCreateUser requestUser) {
     this.name = requestUser.name();
     this.cpf = requestUser.cpf();
     this.picture = PictureConverter.base64ToByteArray(requestUser.picture());
-    //this.picture = requestUser.picture().getBytes();
   }
 
   public String obfuscateCpf() {
