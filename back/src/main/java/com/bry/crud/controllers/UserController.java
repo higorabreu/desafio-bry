@@ -33,7 +33,7 @@ import com.bry.crud.util.PictureConverter;
 import jakarta.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class UserController {
 
   @Autowired
