@@ -80,6 +80,6 @@ This is a Java SpringBoot backend API integrated with a PostgreSQL database and 
 
 You can use the provided Postman collection to test the backend API endpoints.
 
-[![Run in Postman](https://run.pstmn.io/button.svg)]([https://www.getpostman.com/collections/your-postman-collection-link](https://www.postman.com/dark-robot-470395/workspace/higor-abreu/collection/28919232-9356cc51-1727-4446-81fd-7816e501e07e?action=share&creator=28919232))
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.postman.com/dark-robot-470395/workspace/higor-abreu/collection/28919232-9356cc51-1727-4446-81fd-7816e501e07e?action=share&creator=28919232)
 
 Click the button above to import the collection into your Postman application.
