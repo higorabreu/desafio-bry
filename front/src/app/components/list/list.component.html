@@ -1,0 +1,18 @@
+<div class="flex flex-col gap-4 items-center my-12">
+  <table>
+    <thead>
+      <tr class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <th class="py-2 px-4 text-sm text-left text-gray-800 dark:text-gray-300">Id</th>
+        <th class="py-2 px-4 text-sm text-left text-gray-800 dark:text-gray-300">Nome</th>
+        <th class="py-2 px-4 text-sm text-left text-gray-800 dark:text-gray-300">Cpf</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+        <td class="py-3 px-4 text-sm text-gray-800 dark:text-gray-300">{{ user.id }}</td>
+        <td class="py-3 px-4 text-sm text-gray-800 dark:text-gray-300">{{ user.name }}</td>
+        <td class="py-3 px-4 text-sm text-gray-800 dark:text-gray-300">{{ user.cpf }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

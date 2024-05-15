@@ -43,23 +43,21 @@ public class UserService {
   }
 
   // getAllUsers
-  public List<User> getAllUsers(int page, int size) throws UserFetchException{
+  public List<User> getAllUsers() throws UserFetchException {
     try {
-      Pageable pageable = PageRequest.of(page, size);
-      Page<User> usersPage = repository.findAll(pageable);
+        List<User> users = repository.findAll();
 
-      if (usersPage.isEmpty()) {
-        return Collections.emptyList();
+        if (users.isEmpty()) {
+            return Collections.emptyList();
         } else {
-          List<User> users = usersPage.getContent();
-          users.forEach(user -> user.setCpf(user.obfuscateCpf()));
-          return users;
+            users.forEach(user -> user.setCpf(user.obfuscateCpf()));
+            return users;
         }
-    } catch (Exception e){
+    } catch (Exception e) {
         logger.error("Failed to fetch users", e);
         throw new UserFetchException();
     }
-  }
+}
 
   // createUser
   public void createUser(RequestCreateUser data) throws UserCreationFailureException, UserAlreadyExistsException, InvalidCpfException {
