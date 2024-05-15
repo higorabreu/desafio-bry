@@ -71,7 +71,6 @@ This is a Java SpringBoot backend API integrated with a PostgreSQL database and 
      ng serve
      ```
 
-This section now includes the steps to ensure PostgreSQL is installed, create a new user in PostgreSQL, and then proceeds with the backend and frontend setup. Let me know if you need further adjustments!
 ## Usage
 
 1. Access the application at `http://localhost:4200` in your browser.
